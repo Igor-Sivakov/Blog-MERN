@@ -2,6 +2,7 @@ import express from 'express'
 import multer from 'multer'
 import mongoose from 'mongoose'
 import cors from 'cors'
+import fs from 'fs'
 import {
   registerValidation,
   loginValidation,
@@ -10,8 +11,6 @@ import {
 } from './validations/validations.js'
 import { checkAuth, handelValidationsErrors } from './utils/index.js'
 import { PostController, UserController } from './controllers/index.js'
-
-// mongodb+srv://admin:yygelrun@cluster0.wvcw5io.mongodb.net/blog?retryWrites=true&w=majority
 
 mongoose
   .connect(process.env.MONGODB_URI)
@@ -22,6 +21,9 @@ const app = express()
 
 const storage = multer.diskStorage({
   destination: (_, __, cb) => {
+    if (!fs.existsSync('uploads')) {
+      fs.mkdirSync('uploads')
+    }
     cb(null, 'uploads')
   },
   filename: (_, file, cb) => {
